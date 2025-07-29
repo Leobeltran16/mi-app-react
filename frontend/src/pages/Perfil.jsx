@@ -6,7 +6,7 @@ const Perfil = () => {
 
   return (
     <div>
-      <h2>Perfil de usuario</h2>
+      <h2>Perfil usuario</h2>
       <p>Email: {usuario?.email}</p>
     </div>
   );
