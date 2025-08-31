@@ -1,28 +1,21 @@
-// context/AuthContext.jsx
 import { createContext, useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api";
 
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  // 🔄 IMPORTANTE: usamos `undefined` para saber si ya cargó o no
+  // undefined = cargando; null = no logueado; objeto = usuario
   const [usuario, setUsuario] = useState(undefined);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     const usuarioGuardado = localStorage.getItem("usuario");
 
-    if (usuarioGuardado) {
-      setUsuario(JSON.parse(usuarioGuardado));
-    }
+    if (usuarioGuardado) setUsuario(JSON.parse(usuarioGuardado));
 
     if (token) {
-      axios
-        .get("http://localhost:3001/api/usuarios/perfil", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+      api
+        .get("/api/usuarios/perfil")
         .then((res) => {
           setUsuario(res.data);
           localStorage.setItem("usuario", JSON.stringify(res.data));
@@ -33,7 +26,6 @@ export function AuthProvider({ children }) {
           localStorage.removeItem("usuario");
         });
     } else {
-      // No hay token ni usuario guardado
       setUsuario(null);
     }
   }, []);

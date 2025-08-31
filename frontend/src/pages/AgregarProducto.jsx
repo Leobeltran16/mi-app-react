@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import axios from "axios";
+import { useState } from "react";
+import api from "../api";
 
 function AgregarProducto() {
   const [nombre, setNombre] = useState("");
@@ -7,24 +7,14 @@ function AgregarProducto() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const token = localStorage.getItem("token");
-      await axios.post(
-        "http://localhost:3001/api/productos",
-        { nombre, precio },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await api.post("/api/productos", { nombre, precio });
       alert("Producto agregado correctamente");
       setNombre("");
       setPrecio("");
     } catch (error) {
-      alert("Error al agregar producto");
       console.error(error);
+      alert("Error al agregar producto");
     }
   };
 

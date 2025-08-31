@@ -1,6 +1,5 @@
-// src/pages/PanelAdmin.jsx
 import { useEffect, useState, useContext } from "react";
-import axios from "axios";
+import api from "../api";
 import { AuthContext } from "../context/AuthContext";
 
 const PanelAdmin = () => {
@@ -17,16 +16,10 @@ const PanelAdmin = () => {
       return;
     }
 
-    axios
-      .get("http://localhost:3001/api/compras/todas", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+    api
+      .get("/api/compras/todas")
       .then((res) => setCompras(res.data))
-      .catch((err) => {
-        console.error("Error al cargar compras:", err);
-      })
+      .catch((err) => console.error("Error al cargar compras:", err))
       .finally(() => setCargando(false));
   }, [usuario]);
 

@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
+import { useEffect, useState, useContext } from "react";
+import api from "../api";
 import { CarritoContext } from "../context/CarritoContext";
 
 function ListaProductos() {
@@ -7,16 +7,10 @@ function ListaProductos() {
   const { agregarAlCarrito } = useContext(CarritoContext);
 
   useEffect(() => {
-    const obtenerProductos = async () => {
-      try {
-        const response = await axios.get("http://localhost:3001/api/productos");
-        setProductos(response.data);
-      } catch (error) {
-        console.error("Error al obtener productos", error);
-      }
-    };
-
-    obtenerProductos();
+    api
+      .get("/api/productos")
+      .then((res) => setProductos(res.data))
+      .catch((error) => console.error("Error al obtener productos", error));
   }, []);
 
   return (

@@ -1,41 +1,24 @@
-import React, { useContext } from "react";
-import axios from "axios";
+import { useContext } from "react";
+import api from "../api";
 import { CarritoContext } from "../context/CarritoContext";
 
 function Carrito() {
-  const {
-    carrito,
-    eliminarDelCarrito,
-    vaciarCarrito,
-    setCarrito,
-  } = useContext(CarritoContext);
+  const { carrito, eliminarDelCarrito, vaciarCarrito, setCarrito } =
+    useContext(CarritoContext);
 
-  const calcularTotal = () => {
-    return carrito.reduce((total, item) => total + item.precio, 0);
-  };
+  const calcularTotal = () =>
+    carrito.reduce((total, item) => total + item.precio, 0);
 
   const finalizarCompra = async () => {
     if (carrito.length === 0) {
       alert("Tu carrito está vacío");
       return;
     }
-
     try {
-      const token = localStorage.getItem("token");
-
-      const respuesta = await axios.post(
-        "http://localhost:3001/api/compras",
-        { productos: carrito },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
+      await api.post("/api/compras", { productos: carrito });
       alert("Compra realizada con éxito");
-      setCarrito([]); // Limpia el estado global
-      localStorage.removeItem("carrito"); // Limpia el localStorage
+      setCarrito([]);
+      localStorage.removeItem("carrito");
     } catch (err) {
       console.error("Error al finalizar compra:", err.response?.data || err.message);
       alert("Error al finalizar la compra");
@@ -45,7 +28,6 @@ function Carrito() {
   return (
     <div>
       <h2>🛒 Carrito</h2>
-
       {carrito.length === 0 ? (
         <p>No hay productos en el carrito.</p>
       ) : (

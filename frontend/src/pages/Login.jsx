@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../api";
 import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
@@ -10,29 +11,19 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
-      const res = await fetch("http://localhost:3001/api/usuarios/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const res = await api.post("/api/usuarios/login", { email, password });
+      const data = res.data;
 
-      const data = await res.json();
+      // guarda token y usuario (incluye rol)
+      if (data?.token) localStorage.setItem("token", data.token);
+      if (data?.usuario) login(data.usuario);
 
-      if (res.ok) {
-        // ✅ Guardamos el token y todos los datos del usuario, incluyendo el rol
-        localStorage.setItem("token", data.token);
-        login(data.usuario); // El usuario incluye: id, nombre, email, rol
-
-        alert("Login exitoso");
-        navigate("/perfil");
-      } else {
-        alert("Error al iniciar sesión: " + data.mensaje);
-      }
+      alert("Login exitoso");
+      navigate("/perfil");
     } catch (err) {
       console.error("Error al hacer login:", err);
-      alert("Error de red");
+      alert("Error de red o credenciales");
     }
   };
 
